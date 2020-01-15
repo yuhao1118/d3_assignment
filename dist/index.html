@@ -7,28 +7,33 @@
     <title>D3 assignment</title>
   </head>
   <body>
-    <h1></h1>
-    <button id="reset">Reset</button>
+    <h1 id='title'></h1>
+    <button id="reset">reset</button>
     <select id="colorDropDown">
-      <option value="blue">Blue</option>
-      <option value="orange">Orange</option>
-      <option value="green">Green</option>
-      <option value="grey">Grey</option>
-      <option value="purple">Purple</option>
-      <option value="red">Red</option>
+      <option value="rainbow">rainbow</option>
+      <option value="blue">blue</option>
+      <option value="orange">orange</option>
+      <option value="green">green</option>
+      <option value="grey">grey</option>
+      <option value="purple">purple</option>
+      <option value="red">red</option>
     </select>
     <select id="funcDropDown">
-      <option value="seque">Seque</option>
-      <option value="sqrt">Sqrt</option>
-      <option value="pow">Pow</option>
-      <option value="log">Log</option>
+      <option value="seque">seque</option>
+      <option value="sqrt">sqrt</option>
+      <option value="pow">pow</option>
+      <option value="log">log</option>
+    </select>
+    <select id="statisLevel">
+      <option value="states">state level</option>
+      <option value="counties">county level</option>
     </select>
     <input type="text" id="titleVal" placeholder="Change title" />
-    <button id="submit">Submit</button>
-    <button id="toggle">Toggle Dataset</button>
+    <button id="submit">submit</button>
+    <button id="toggle">toggle dataset</button>
     <br />
     <br />
-    <svg></svg>
+    <svg id='USChoropleth'></svg>
   <script type="text/javascript" src="main.js"></script></body>
   <style>
     body {
