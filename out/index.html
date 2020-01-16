@@ -45,9 +45,18 @@
     <section>
         <article><h1>D3.js assignment: US choropleth map</h1>
 <h2>Introduction</h2>
-<p>A data visualisation of US choropleth map is implemented by d3.js as well as the original example from <a href="https://observablehq.com/@d3/choropleth">Observable</a>. It is developed from this example and is wrapped into an es6 style class. The user could furtherly work on the visualisation with their own dataset replaced.</p>
-<p>The aim of this project is to wrap it into a reusable component so as to make it easy for users to use it with their own dataset. It provides a class for users to create instances from it and modify its properties by calling a number of set/get functions provided.</p>
-<p>It requires a dataset (a csv file) that contains the statistical values measured by different regions (states or counties). Also, these regions should be indexed by the US <a href="https://www.nrcs.usda.gov/wps/portal/nrcs/detail/national/home/?cid=nrcs143_013697">FIPS</a> code so as to visualise correctly on the map. An example file structural is as followed</p>
+<p>A data visualisation of US choropleth map is implemented by d3.js as well as an example from <a href="https://observablehq.com/@d3/choropleth">Observable</a>. It is developed from this example and is wrapped into an es6 style class.</p>
+<p>The aim of this project is to wrap the code into a reusable component so as to make it easy for people to use with their own dataset. It provides a class for users to create instances from it and acquire or modify the properties of the instance via several set/get functions provided.</p>
+<pre class="prettyprint source lang-javascript"><code>var app = new USChoropleth(
+  'US birth number by state (2016)',
+  '/static/PopulationEstimates.csv',
+  'FIPS',
+  'Births_2016'
+);
+
+app.execute();
+</code></pre>
+<p>It requires a dataset (a csv file) that contains the statistical values measured by different regions (states or counties) in America. Also, these regions should be indexed by the US <a href="https://www.nrcs.usda.gov/wps/portal/nrcs/detail/national/home/?cid=nrcs143_013697">FIPS</a> code so as to display correctly on the map. An example dataset structural is as followed</p>
 <pre class="prettyprint source"><code>id,value
 01001,5.1
 01003,4.9
@@ -55,7 +64,7 @@
 01007,6.2
 01009,5.1
 </code></pre>
-<p>where the <strong>id</strong> is the FIPS index column and <strong>value</strong> is the data column.</p>
+<p>where the <strong>id</strong> is the name of the FIPS index column and <strong>value</strong> is the name of the data column.</p>
 <h2>Set-up</h2>
 <p>This project is managed by <strong>webpack</strong>. The project structural is as followed</p>
 <pre class="prettyprint source"><code>.
@@ -71,19 +80,23 @@
 </code></pre>
 <h3>For developing:</h3>
 <p>Run:</p>
-<pre class="prettyprint source lang-shell"><code>npm install # only for the first time
+<pre class="prettyprint source lang-shell"><code>npm install # for the first time only
 npm run start
 </code></pre>
 <p>It will fetch all the necessary dependencies from the internet (may take a while) and start a hot-reload server hosting the webpage on <strong>localhost port 8080</strong> by default.</p>
 <h3>For publishing:</h3>
 <p>Run:</p>
-<pre class="prettyprint source lang-shell"><code>npm install # only for the first time
+<pre class="prettyprint source lang-shell"><code>npm install # for the first time only
 npm run build
 </code></pre>
-<p>It will export all the files into the <strong>dist</strong> folder. Use could either host the webpage online e.g. using gitpages, or run the project in a web-sever locally. For example, open the terminal in the <strong>dist</strong> folder and run:</p>
+<p>It will export all the files including the compressed source codes and statics files into the <strong>dist</strong> folder.</p>
+<p>This project should be run within a web-server to avoid <strong>CORS</strong> problems.</p>
+<p>Users could either host the project online such as using gitpages, or run it locally in a web-sever. For example, open the terminal in the <strong>dist</strong> folder and run</p>
 <pre class="prettyprint source"><code>python -m http.server 8000
 </code></pre>
-<p>will host the project on <strong>localhost port 8000</strong>.</p></article>
+<p>will run a built-in http server from Python(3) that hosts the project on <strong>localhost port 8000</strong>.</p>
+<h2>License</h2>
+<p>This project is developed from an example on <a href="https://observablehq.com/@d3/choropleth">Observable</a> (M. Bostock, 2017). This project is open-sourced under the GPLv3 License.</p></article>
     </section>
 
 
@@ -94,13 +107,13 @@ npm run build
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="USChoropleth.html">USChoropleth</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="USChoropleth.html">USChoropleth</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li><li><a href="global.html#clickCount">clickCount</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 15 2020 16:57:39 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 15 2020 23:43:24 GMT+0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -4,7 +4,9 @@ import * as topojson from 'topojson-client';
 
 class USChoropleth {
   /**
-   * US Map Choropleth
+   * The main class that visualises the data on an US choropleth map.
+   * Instances can be created from this class and properties can be acquired and
+   * modified via the set/get functions provided.
    *
    * @constructor
    * @param {string} title - The title of the graph
@@ -87,7 +89,7 @@ class USChoropleth {
    * This functions returns the index column. The index column
    * is the column that contains the FIPS codes which are used to index
    * states and counties in America.
-   * 
+   *
    * @returns {string} name of the FIPS code column.
    * @memberof USChoropleth
    */
@@ -120,7 +122,7 @@ class USChoropleth {
 
   /**
    * Set the statistic level of map. Two levels are allowed:
-   * 
+   *
    * <br> <br> "states" -- display the data on states level
    * <br> "counties" -- display the data on counties level.
    *
@@ -131,12 +133,20 @@ class USChoropleth {
     this.statisLevel = level;
   }
 
-  getStatisLevel() {
-    let obj = { key: this.statisLevel, func: undefined };
+  /**
+   * This function returns an object holds configurations
+   * for different statistic level. This function does not
+   * need to be accessed by users useless there is a special purpose
+   *
+   * @returns {object} statistic level configuration object
+   * @memberof USChoropleth
+   */
+  getStatisLevelConfig() {
+    const obj = { key: this.statisLevel, func: undefined };
     if (this.statisLevel === 'states') {
-      obj['func'] = d => parseInt(d || 0) * 1000;
+      obj.func = d => parseInt(d || 0) * 1000;
     } else if (this.statisLevel === 'counties') {
-      obj['func'] = d => parseInt(d || 0);
+      obj.func = d => parseInt(d || 0);
     }
     return obj;
   }
@@ -156,10 +166,22 @@ class USChoropleth {
     this.scaleFunction = scaleFunction;
   }
 
-  getScaleFunction(usData) {
+  /**
+   * This function takes an array that contains statistic data from every
+   * region to determine the upper and lower boundary of the scale function.
+   * Then it returns the scale function with data range and intepolate
+   * colour function defined. This function does not need to be accessed by users
+   * useless there is a special purpose
+   *
+   * @param {Array} usRegionVal
+   * @returns {Function} scale function with data range and intepolate
+   * colour function defined
+   * @memberof USChoropleth
+   */
+  getScaleFunction(usRegionVal) {
     const scaleFunction = this.scaleFunction;
     return scaleFunction(
-      [d3.min(usData) || 1, d3.max(usData)],
+      [d3.min(usRegionVal) || 1, d3.max(usRegionVal)],
       this.getColor()
     );
   }
@@ -232,6 +254,15 @@ class USChoropleth {
     return this.legendStep;
   }
 
+  /**
+   * This function returns the promise object that contains
+   * a js map that maps each row of FIPS index with the corresponing
+   * statistic value. This function does not need to be accessed by users
+   * useless there is a special purpose
+   *
+   * @returns {object} the index -> data map within a promise object
+   * @memberof USChoropleth
+   */
   getCsv() {
     return d3.csv(this.fileUrl).then(csv => {
       console.log(this.getDataColName());
@@ -244,17 +275,28 @@ class USChoropleth {
     });
   }
 
+  /**
+   * This function returns the promise object that contains
+   * geographical data which is used by d3 to render the map.
+   * This function does not need to be accessed by users
+   * useless there is a special purpose
+   *
+   * @returns {object} geographical data within a promise object
+   * @memberof USChoropleth
+   */
   getJson() {
     return d3.json(this.mapUrl).then(json => {
       return this.getCsv().then(column => {
-        let statisLevel = this.getStatisLevel();
-        let usStateID = json.objects[statisLevel.key].geometries.map(level => {
-          return column.get(statisLevel.func(level.id));
-        });
+        const statisLevel = this.getStatisLevelConfig();
+        const usRegionVal = json.objects[statisLevel.key].geometries.map(
+          level => {
+            return column.get(statisLevel.func(level.id));
+          }
+        );
         return {
           us: json,
           column: column,
-          usStateID: usStateID,
+          usRegionVal: usRegionVal,
           statisLevel: statisLevel
         };
       });
@@ -264,14 +306,14 @@ class USChoropleth {
   /**
    * The main function that renders the corresponding visualisation on the webpage.
    * Users should always call this function after modifing the properties
-   * properly (by calling the Set methods provided)
+   * properly (via the set methods provided)
    */
   execute() {
     this.getJson().then(data => {
       /** Draw the Title */
       d3.select('#title').text(this.getTitle());
 
-      /** Clean the svg element*/
+      /** Clean the svg */
       d3.select('#USChoropleth')
         .selectAll('*')
         .remove();
@@ -279,11 +321,11 @@ class USChoropleth {
       /** Get the svg selection */
       const svg = d3
         .select('#USChoropleth')
-        .attr('width', '70%')
+        .attr('width', '75%')
         .attr('viewBox', [0, 0, 975, 620]);
 
       /** Get the colour interpolate function */
-      const colorScale = this.getScaleFunction(data.usStateID);
+      const colorScale = this.getScaleFunction(data.usRegionVal);
 
       /** Draw the US map */
       svg
@@ -299,7 +341,7 @@ class USChoropleth {
           colorScale(data.column.get(data.statisLevel.func(d.id)))
         )
         .attr('stroke', this.getStrokeColor())
-        .attr('stroke-width','0.1')
+        .attr('stroke-width', '0.1')
         .attr('d', d3.geoPath())
         .on('mouseover', () => {
           d3.select(d3.event.target).style('opacity', '.6');
@@ -341,18 +383,23 @@ class USChoropleth {
   }
 }
 
+/** An example instance created from the class */
 var app = new USChoropleth(
   'US birth number by state (2016)',
   '/static/PopulationEstimates.csv',
   'FIPS',
   'Births_2016'
 );
-
 app.execute();
 
+/** Belows are serveral interactive elements that shows
+ * how the set functions could be used to modify the properties.
+ */
+
+/** A drop-down menu allows selecting different colours */
 d3.select('#colorDropDown').on('change', () => {
-  let color = d3.event.target.value;
-  let colorMap = {
+  const color = d3.event.target.value;
+  const colorMap = {
     rainbow: d3.interpolateRainbow,
     blue: d3.interpolateBlues,
     orange: d3.interpolateOranges,
@@ -366,12 +413,12 @@ d3.select('#colorDropDown').on('change', () => {
   app.execute();
 });
 
+/** A scale function drop-down menu allows selecting different scale functions  */
 d3.select('#funcDropDown').on('change', () => {
-  let func = d3.event.target.value;
-  let funcMap = {
+  const func = d3.event.target.value;
+  const funcMap = {
     seque: d3.scaleSequential,
     sqrt: d3.scaleSequentialSqrt,
-    pow: d3.scaleSequentialPow,
     log: d3.scaleSequentialLog
   };
 
@@ -379,22 +426,32 @@ d3.select('#funcDropDown').on('change', () => {
   app.execute();
 });
 
+/** A statistic drop-down menu allows selecting different statistic levels */
 d3.select('#statisLevel').on('change', () => {
   app.setStatisLevel(d3.event.target.value);
   app.execute();
 });
 
+/** A sumbit button changes the title of the visualisation */
 d3.select('#submit').on('click', () => {
-  let title = d3.select('#titleVal').node().value;
+  const title = d3.select('#titleVal').node().value;
   app.setTitle(title);
   app.execute();
 });
 
+/** toggle between two different datasets
+ * Notice that the second dataset does not support
+ * state-level visualisation.
+ */
+
+ /**
+  * Toggle button count.
+  */
 var clickCount = 0;
 d3.select('#toggle').on('click', () => {
   clickCount += 1;
   app =
-    clickCount % 2 == 0
+    clickCount % 2 === 0
       ? new USChoropleth(
           'US birth number by state (2016)',
           '/static/PopulationEstimates.csv',
@@ -408,7 +465,7 @@ d3.select('#toggle').on('click', () => {
           'rate'
         );
 
-  if (app.getFileUrl() == '/static/PopulationEstimates.csv') {
+  if (app.getFileUrl() === '/static/PopulationEstimates.csv') {
     app.setStatisLevel('states');
   } else {
     app.setStatisLevel('counties');
@@ -418,8 +475,9 @@ d3.select('#toggle').on('click', () => {
   app.execute();
 });
 
+/** reset the zoom of the svg graph */
 d3.select('#reset').on('click', () => {
-  let zoom = d3.zoom().on('zoom', () => {
+  const zoom = d3.zoom().on('zoom', () => {
     d3.select('#usMap').attr('transform', d3.event.transform);
   });
   d3.select('#USChoropleth')
