@@ -15,7 +15,7 @@ class USChoropleth {
    * @param {string} dataColName - The column name of the data by regions
    * @param {string} [mapUrl = /static/counties-albers-10m.json] - The file url of the US map
    */
-  constructor(
+  constructor (
     title,
     fileUrl,
     indexColName,
@@ -39,7 +39,7 @@ class USChoropleth {
    *
    * @param {string} title title of the graph
    */
-  setTitle(title) {
+  setTitle (title) {
     this.title = title;
   }
 
@@ -49,7 +49,7 @@ class USChoropleth {
    * @returns {string} title of the graph.
    * @memberof USChoropleth
    */
-  getTitle() {
+  getTitle () {
     return this.title;
   }
 
@@ -58,7 +58,7 @@ class USChoropleth {
    *
    * @param {string} fileUrl url of the dataset.
    */
-  setFileUrl(fileUrl) {
+  setFileUrl (fileUrl) {
     this.fileUrl = fileUrl;
   }
 
@@ -68,7 +68,7 @@ class USChoropleth {
    * @returns {string} url of the current dataset.
    * @memberof USChoropleth
    */
-  getFileUrl() {
+  getFileUrl () {
     return this.fileUrl;
   }
 
@@ -81,7 +81,7 @@ class USChoropleth {
    * @param {string} indexColName name of the FIPS code column.
    * @memberof USChoropleth
    */
-  setIndexColName(indexColName) {
+  setIndexColName (indexColName) {
     this.indexColName = indexColName;
   }
 
@@ -93,7 +93,7 @@ class USChoropleth {
    * @returns {string} name of the FIPS code column.
    * @memberof USChoropleth
    */
-  getIndexColName() {
+  getIndexColName () {
     return this.indexColName;
   }
 
@@ -105,7 +105,7 @@ class USChoropleth {
    * @param {string} indexColName name of the data column.
    * @memberof USChoropleth
    */
-  setDataColName(dataColName) {
+  setDataColName (dataColName) {
     this.dataColName = dataColName;
   }
 
@@ -116,7 +116,7 @@ class USChoropleth {
    * @returns {string} name of the data column.
    * @memberof USChoropleth
    */
-  getDataColName() {
+  getDataColName () {
     return this.dataColName;
   }
 
@@ -129,7 +129,7 @@ class USChoropleth {
    * @param {string} level  statistic level
    * @memberof USChoropleth
    */
-  setStatisLevel(level) {
+  setStatisLevel (level) {
     this.statisLevel = level;
   }
 
@@ -141,7 +141,7 @@ class USChoropleth {
    * @returns {object} statistic level configuration object
    * @memberof USChoropleth
    */
-  getStatisLevelConfig() {
+  getStatisLevelConfig () {
     const obj = { key: this.statisLevel, func: undefined };
     if (this.statisLevel === 'states') {
       obj.func = d => parseInt(d || 0) * 1000;
@@ -162,7 +162,7 @@ class USChoropleth {
    * @param {Function} scaleFunction d3 sequential scale function
    * @memberof USChoropleth
    */
-  setScaleFunction(scaleFunction) {
+  setScaleFunction (scaleFunction) {
     this.scaleFunction = scaleFunction;
   }
 
@@ -178,7 +178,7 @@ class USChoropleth {
    * colour function defined
    * @memberof USChoropleth
    */
-  getScaleFunction(usRegionVal) {
+  getScaleFunction (usRegionVal) {
     const scaleFunction = this.scaleFunction;
     return scaleFunction(
       [d3.min(usRegionVal) || 1, d3.max(usRegionVal)],
@@ -196,7 +196,7 @@ class USChoropleth {
    * @param {Function} interpolateColor d3 interpolate function
    * @memberof USChoropleth
    */
-  setColor(interpolateColor) {
+  setColor (interpolateColor) {
     this.interpolateColor = interpolateColor;
   }
 
@@ -209,7 +209,7 @@ class USChoropleth {
    * @returns {Function} the d3 colour interpolate function
    * @memberof USChoropleth
    */
-  getColor() {
+  getColor () {
     return this.interpolateColor;
   }
 
@@ -219,7 +219,7 @@ class USChoropleth {
    * @param {string} strokeColor css colour
    * @memberof USChoropleth
    */
-  setStrokeColor(strokeColor) {
+  setStrokeColor (strokeColor) {
     this.strokeColor = strokeColor;
   }
 
@@ -229,7 +229,7 @@ class USChoropleth {
    * @returns {string} css colour
    * @memberof USChoropleth
    */
-  getStrokeColor() {
+  getStrokeColor () {
     return this.strokeColor;
   }
 
@@ -240,7 +240,7 @@ class USChoropleth {
    * @param {Array} legendStep a list of legend step values
    * @memberof USChoropleth
    */
-  setLegendStep(legendStep) {
+  setLegendStep (legendStep) {
     this.legendStep = legendStep;
   }
 
@@ -250,7 +250,7 @@ class USChoropleth {
    * @returns {Array} the current legend step values in an array
    * @memberof USChoropleth
    */
-  getLegengStep() {
+  getLegengStep () {
     return this.legendStep;
   }
 
@@ -263,7 +263,7 @@ class USChoropleth {
    * @returns {object} the index -> data map within a promise object
    * @memberof USChoropleth
    */
-  getCsv() {
+  getCsv () {
     return d3.csv(this.fileUrl).then(csv => {
       console.log(this.getDataColName());
       return new Map(
@@ -284,7 +284,7 @@ class USChoropleth {
    * @returns {object} geographical data within a promise object
    * @memberof USChoropleth
    */
-  getJson() {
+  getJson () {
     return d3.json(this.mapUrl).then(json => {
       return this.getCsv().then(column => {
         const statisLevel = this.getStatisLevelConfig();
@@ -308,7 +308,7 @@ class USChoropleth {
    * Users should always call this function after modifing the properties
    * properly (via the set methods provided)
    */
-  execute() {
+  execute () {
     this.getJson().then(data => {
       /** Draw the Title */
       d3.select('#title').text(this.getTitle());
